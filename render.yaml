@@ -1,0 +1,31 @@
+# MediTrust on Render — single web service.
+# Express serves the API (/api/*) AND the built React app (client/dist).
+# Create via Dashboard → New → Blueprint → select this repo,
+# then fill the SYNC: false values in the Render dashboard.
+services:
+  - type: web
+    name: meditrust
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Public base URL of this service (e.g. https://meditrust.onrender.com).
+      # Used for CORS + absolute links. Leave empty for same-origin default.
+      - key: FRONTEND_URL
+        value: ""
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
