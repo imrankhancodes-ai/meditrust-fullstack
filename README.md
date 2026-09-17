@@ -274,12 +274,14 @@ Auth header for protected routes: `Authorization: Bearer <token>`.
 | GET | `/api/chat` | user | Full chat history (poll every ~5s) |
 | POST | `/api/chat` | user | Send message → returns user + AI reply |
 | GET | `/api/doctor` | – | All doctors |
+| GET | `/api/doctor/my` | user | Own doctor appointments (patient profile) |
 | POST | `/api/doctor/request` | user | Apply to become a doctor |
 | POST | `/api/doctor/:did` | user | Book appointment |
 | GET | `/api/doctor/appointments` | doctor | Own appointments |
 | PUT | `/api/doctor/appointments/:aid` | user | Update appointment status |
 | GET | `/api/pathologist` | – | All pathologists |
 | GET | `/api/pathologist/tests` | – | All pathology tests |
+| GET | `/api/pathologist/my` | user | Own test bookings (patient profile) |
 | POST | `/api/pathologist/request` | user | Apply to become a pathologist |
 | POST | `/api/pathologist/add` | pathologist | Add a test |
 | PUT | `/api/pathologist/test/:tid` | pathologist | Update own test |

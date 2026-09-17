@@ -100,6 +100,18 @@ const getAllAppointments = async (req, res) => {
 
 }
 
+// Patient's own test bookings (for the Profile section)
+const getMyAppointments = async (req, res) => {
+
+    const appointments = await PathologyAppointment.find({ user: req.user.id })
+        .populate('pathologist')
+        .populate('pathologyTest')
+        .sort({ createdAt: -1 })
+
+    res.status(200).json(appointments)
+
+}
+
 
 const updateAppointment = async (req, res) => {
     const appointmentId = req.params.aid
@@ -292,6 +304,6 @@ const deletePathologyTest = async (req, res) => {
 
 
 
-const pathologistController = { becomePathologist, addPathologyTest, updatePathologyTest, deletePathologyTest, bookTest, getAllAppointments, updateAppointment, getAppointment, getAllPathologyTests, getAllPathologists }
+const pathologistController = { becomePathologist, addPathologyTest, updatePathologyTest, deletePathologyTest, bookTest, getAllAppointments, getMyAppointments, updateAppointment, getAppointment, getAllPathologyTests, getAllPathologists }
 
 export default pathologistController

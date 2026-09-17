@@ -57,6 +57,17 @@ const getAllAppointments = async (req, res) => {
 
 }
 
+// Patient's own doctor appointments (for the Profile section)
+const getMyAppointments = async (req, res) => {
+
+    const appointments = await DoctorAppointment.find({ user: req.user.id })
+        .populate('doctor')
+        .sort({ createdAt: -1 })
+
+    res.status(200).json(appointments)
+
+}
+
 
 
 const updateAppointment = async (req, res) => {
@@ -152,6 +163,7 @@ const bookAppointment = async (req, res) => {
 const doctorController = {
     becomeDoctor,
     getAllAppointments,
+    getMyAppointments,
     getAppointment,
     getAllDoctors,
     updateAppointment,

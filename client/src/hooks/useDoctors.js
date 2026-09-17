@@ -19,6 +19,14 @@ export function useDoctorAppointments(enabled = true) {
   });
 }
 
+export function useMyDoctorAppointments(enabled = true) {
+  return useQuery({
+    queryKey: ["my-doctor-appointments"],
+    queryFn: doctorService.myAppointments,
+    enabled,
+  });
+}
+
 export function useBookDoctor() {
   const qc = useQueryClient();
   return useMutation({
@@ -60,6 +68,14 @@ export function usePathologistAppointments(enabled = true) {
   return useQuery({
     queryKey: ["pathologist-appointments"],
     queryFn: pathologistService.appointments,
+    enabled,
+  });
+}
+
+export function useMyPathologyAppointments(enabled = true) {
+  return useQuery({
+    queryKey: ["my-pathology-appointments"],
+    queryFn: pathologistService.myAppointments,
     enabled,
   });
 }

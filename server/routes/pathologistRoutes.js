@@ -7,6 +7,7 @@ const router = express.Router()
 
 router.get("/", pathologistController.getAllPathologists)
 router.get("/tests", pathologistController.getAllPathologyTests)
+router.get("/my", protect.forUser, pathologistController.getMyAppointments)
 router.get("/appointments", protect.forUser, pathologistController.getAllAppointments)
 router.get("/appointments/:aid", protect.forUser, pathologistController.getAppointment)
 

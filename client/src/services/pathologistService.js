@@ -3,6 +3,7 @@ import api from "./api";
 const pathologistService = {
   list: async () => (await api.get("/pathologist")).data,
   tests: async () => (await api.get("/pathologist/tests")).data,
+  myAppointments: async () => (await api.get("/pathologist/my")).data,
   appointments: async () => (await api.get("/pathologist/appointments")).data,
   getAppointment: async (aid) => (await api.get(`/pathologist/appointments/${aid}`)).data,
   request: async (payload) => (await api.post("/pathologist/request", payload)).data,
