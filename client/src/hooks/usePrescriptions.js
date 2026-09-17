@@ -37,7 +37,40 @@ export function useUploadPrescription() {
     mutationFn: (file) => prescriptionService.upload(file),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["prescriptions"] });
+      qc.invalidateQueries({ queryKey: ["credits"] });
     },
-    onError: (err) => toast.error(errMsg(err, "Upload failed")),
+    onError: (err) => {
+      qc.invalidateQueries({ queryKey: ["credits"] });
+      if (err?.response?.status !== 402) toast.error(errMsg(err, "Upload failed"));
+    },
+  });
+}
+
+export function useCredits(enabled = true) {
+  return useQuery({
+    queryKey: ["credits"],
+    queryFn: prescriptionService.credits,
+    enabled,
+  });
+}
+
+export function useMyCreditRequests(enabled = true) {
+  return useQuery({
+    queryKey: ["credit-requests-mine"],
+    queryFn: prescriptionService.myCreditRequests,
+    enabled,
+  });
+}
+
+export function useRequestCredits() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ requestedCredits, reason }) =>
+      prescriptionService.requestCredits(requestedCredits, reason),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["credit-requests-mine"] });
+      qc.invalidateQueries({ queryKey: ["credits"] });
+    },
+    onError: (err) => toast.error(errMsg(err, "Request failed")),
   });
 }

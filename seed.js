@@ -538,6 +538,7 @@ const seedDatabase = async () => {
         await mongoose.connection.db.collection("orders").deleteMany({}).catch(() => {});
         await mongoose.connection.db.collection("chatmessages").deleteMany({}).catch(() => {});
         await mongoose.connection.db.collection("prescriptions").deleteMany({}).catch(() => {});
+        await mongoose.connection.db.collection("creditrequests").deleteMany({}).catch(() => {});
 
         console.log("🗑️ Existing data cleared");
 

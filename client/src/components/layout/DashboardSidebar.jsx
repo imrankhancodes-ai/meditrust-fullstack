@@ -10,6 +10,7 @@ export default function DashboardSidebar() {
       { to: "/dashboard/admin/products", label: "Products" },
       { to: "/dashboard/admin/verifications", label: "Verifications" },
       { to: "/dashboard/admin/orders", label: "Orders" },
+      { to: "/dashboard/admin/credits", label: "Credits" },
     ],
     DOCTOR: [{ to: "/dashboard/doctor/appointments", label: "Appointments" }],
     PATHOLOGIST: [

@@ -8,6 +8,7 @@ import useAuth from "../../hooks/useAuth";
 import authService from "../../services/authService";
 import { setProfile } from "../../redux/slices/authSlice";
 import { useMyDoctorAppointments, useMyPathologyAppointments } from "../../hooks/useDoctors";
+import { useCredits, useMyCreditRequests } from "../../hooks/usePrescriptions";
 import { Input, Button, Card, Badge, Spinner } from "../../components/ui/ui";
 
 function errMsg(err, fallback) {
@@ -30,6 +31,8 @@ export default function Profile() {
 
   const doctorsQ = useMyDoctorAppointments();
   const labsQ = useMyPathologyAppointments();
+  const creditsQ = useCredits();
+  const creditRequestsQ = useMyCreditRequests();
 
   const submit = async (e) => {
     e.preventDefault();
@@ -122,6 +125,42 @@ export default function Profile() {
             {saving ? "Saving…" : "Save changes"}
           </Button>
         </form>
+      </Card>
+
+      <h2 className="mt-8 text-lg font-extrabold text-slate-900">Prescription credits</h2>
+      <Card className="mt-2">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-3xl font-extrabold text-teal-800">
+              {creditsQ.isLoading ? "…" : (creditsQ.data?.credits ?? profile?.prescriptionCredits ?? "—")}
+            </div>
+            <div className="text-xs text-slate-400">1 credit = 1 prescription parse · new accounts start with 3</div>
+          </div>
+          <Link to="/prescriptions/upload" className="btn-press rounded-xl bg-teal-700 px-4 py-2 text-sm font-bold text-white">
+            Upload / Request →
+          </Link>
+        </div>
+        <div className="mt-3 border-t border-slate-100 pt-3">
+          <div className="text-xs font-bold uppercase text-slate-400">Request history</div>
+          {creditRequestsQ.isLoading ? (
+            <Spinner />
+          ) : !creditRequestsQ.data || creditRequestsQ.data.length === 0 ? (
+            <p className="mt-1 text-sm text-slate-400">No credit requests yet.</p>
+          ) : (
+            <div className="mt-2 space-y-2">
+              {creditRequestsQ.data.map((r) => (
+                <div key={r._id} className="flex items-center justify-between gap-2 text-sm">
+                  <span>
+                    <span className="font-bold">+{r.requestedCredits}</span>
+                    <span className="ml-2 text-xs text-slate-400">{new Date(r.createdAt).toLocaleString()}</span>
+                    {r.status === "approved" && <span className="ml-2 text-xs text-slate-500">granted: {r.grantedCredits}</span>}
+                  </span>
+                  <Badge tone={r.status === "approved" ? "delivered" : r.status === "rejected" ? "cancelled" : "pending"}>{r.status}</Badge>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </Card>
 
       <h2 className="mt-8 text-lg font-extrabold text-slate-900">My doctor appointments</h2>

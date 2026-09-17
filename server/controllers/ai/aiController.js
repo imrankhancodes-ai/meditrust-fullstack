@@ -5,6 +5,7 @@ import GEMINI_MODEL from "../../config/aiConfig.js";
 import Prescription from "../../models/prescriptionModel.js";
 import Product from "../../models/productModel.js";
 import Pathologist from "../../models/pathologistModel.js";
+import User from "../../models/userModel.js";
 
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -46,6 +47,24 @@ const explainPrescription = async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ error: "No image uploaded" });
+        }
+
+        // ---- Credit check (admins bypass) ----
+        const dbUser = await User.findById(userId);
+        if (!dbUser) {
+            return res.status(404).json({ error: "User Not Found!" });
+        }
+        const isAdmin = dbUser.userType === "ADMIN";
+        const balance = dbUser.prescriptionCredits ?? 3;
+        if (!isAdmin && balance <= 0) {
+            if (req.file.path && fs.existsSync(req.file.path)) {
+                fs.unlinkSync(req.file.path);
+            }
+            return res.status(402).json({
+                error: "No prescription credits left. Please request more credits from admin.",
+                code: "NO_CREDITS",
+                credits: 0,
+            });
         }
 
         const base64 = fileToBase64(req.file.path);
@@ -91,6 +110,14 @@ const explainPrescription = async (req, res) => {
 
         await prescription.save()
         await prescription.populate("user")
+
+        // ---- Deduct 1 credit on success (admins exempt) ----
+        let creditsRemaining = null;
+        if (!isAdmin) {
+            dbUser.prescriptionCredits = balance - 1;
+            await dbUser.save();
+            creditsRemaining = dbUser.prescriptionCredits;
+        }
 
         res.status(200).json(prescription)
 

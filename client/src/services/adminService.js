@@ -17,6 +17,12 @@ const adminService = {
     (await api.put(`/admin/doctor/${did}`, { isVerified })).data,
   updateOrderStatus: async (oid, status) =>
     (await api.put(`/admin/orders/${oid}`, { status })).data,
+  creditRequests: async (status) =>
+    (await api.get("/admin/credit-requests", { params: status ? { status } : {} })).data,
+  reviewCreditRequest: async (rid, payload) =>
+    (await api.put(`/admin/credit-requests/${rid}`, payload)).data,
+  grantCredits: async (uid, addCredits, adminNote) =>
+    (await api.put(`/admin/users/${uid}/credits`, { addCredits, adminNote })).data,
 };
 
 export default adminService;

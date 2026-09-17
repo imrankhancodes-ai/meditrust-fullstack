@@ -59,6 +59,8 @@ const loginUser = async (req, res) => {
             name: user.name,
             email: user.email,
             phone: user.phone,
+            userType: user.userType,
+            prescriptionCredits: user.prescriptionCredits ?? 3,
             createdAt: user.createdAt,
             token: generateToken(user._id)
         })

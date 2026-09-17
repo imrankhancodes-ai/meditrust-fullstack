@@ -40,6 +40,11 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: true,
         required: true,
+    },
+    prescriptionCredits: {
+        type: Number,
+        default: 3,
+        min: 0,
     }
 }, {
     timestamps: true

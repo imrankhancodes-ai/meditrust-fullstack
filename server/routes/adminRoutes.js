@@ -1,5 +1,6 @@
 import express from "express"
 import adminService from "../controllers/admin/adminController.js"
+import creditController from "../controllers/credit/creditController.js"
 import protect from "../middleware/authMiddleware.js"
 import upload from "../middleware/fileUploadMiddleware.js"
 
@@ -18,6 +19,10 @@ router.put("/product/:pid", protect.forAdmin, adminService.updateProduct)
 router.delete("/product/:pid", protect.forAdmin, adminService.deleteProduct)
 router.put("/pathologists/:pid", protect.forAdmin, adminService.updatePathologist)
 router.put("/doctor/:did", protect.forAdmin, adminService.updateDoctor)
+
+router.get("/credit-requests", protect.forAdmin, creditController.getAllRequests)
+router.put("/credit-requests/:rid", protect.forAdmin, creditController.reviewRequest)
+router.put("/users/:uid/credits", protect.forAdmin, creditController.grantCreditsDirect)
 
 
 export default router

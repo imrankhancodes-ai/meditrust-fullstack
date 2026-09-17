@@ -29,6 +29,7 @@ import AdminProducts from "../pages/dashboard/admin/AdminProducts";
 import AdminProductForm from "../pages/dashboard/admin/AdminProductForm";
 import AdminVerifications from "../pages/dashboard/admin/AdminVerifications";
 import AdminOrders from "../pages/dashboard/admin/AdminOrders";
+import AdminCredits from "../pages/dashboard/admin/AdminCredits";
 import NotFound from "../pages/NotFound";
 
 function DashboardShell({ children }) {
@@ -82,6 +83,7 @@ export default function AppRouter() {
       <Route path="/dashboard/admin/products/:pid/edit" element={<RoleRoute roles={["ADMIN"]}><DashboardShell><AdminProductForm /></DashboardShell></RoleRoute>} />
       <Route path="/dashboard/admin/verifications" element={<RoleRoute roles={["ADMIN"]}><DashboardShell><AdminVerifications /></DashboardShell></RoleRoute>} />
       <Route path="/dashboard/admin/orders" element={<RoleRoute roles={["ADMIN"]}><DashboardShell><AdminOrders /></DashboardShell></RoleRoute>} />
+      <Route path="/dashboard/admin/credits" element={<RoleRoute roles={["ADMIN"]}><DashboardShell><AdminCredits /></DashboardShell></RoleRoute>} />
       <Route path="/dashboard/admin" element={<Navigate to="/dashboard/admin/users" replace />} />
       <Route path="/dashboard" element={<Navigate to="/" replace />} />
 

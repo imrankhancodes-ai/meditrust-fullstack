@@ -83,6 +83,15 @@ export default function Navbar() {
 
           {isLoggedIn ? (
             <div className="hidden items-center gap-2 md:flex">
+              {userType !== "ADMIN" && (
+                <Link
+                  to="/prescriptions/upload"
+                  title="Prescription parsing credits"
+                  className="rounded-xl bg-teal-50 px-3 py-2 text-xs font-extrabold text-teal-800 hover:bg-teal-100"
+                >
+                  🪙 {profile?.prescriptionCredits ?? "—"} credits
+                </Link>
+              )}
               {dashboardLink && (
                 <Link
                   to={dashboardLink}
