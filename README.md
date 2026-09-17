@@ -226,7 +226,7 @@ The Express server serves both the API (`/api/*`) and the built React app
 #      MONGO_URI, JWT_SECRET (auto-generated), GEMINI_API_KEY,
 #      CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
 # 4. Deploy. Render runs:
-#      Build:   npm install && npm run build   (builds client/dist)
+#      Build:   npm run build   (installs root + client deps, builds client/dist)
 #      Start:   npm start                      (node server/server.js)
 # 5. (Optional) set FRONTEND_URL to your public URL
 #      e.g. https://meditrust.onrender.com — used for CORS.
