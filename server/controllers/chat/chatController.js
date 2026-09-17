@@ -1,5 +1,6 @@
 import { GoogleGenAI } from "@google/genai"
 import ChatMessage from "../../models/chatMessageModel.js"
+import GEMINI_MODEL from "../../config/aiConfig.js"
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
 
@@ -47,7 +48,7 @@ const sendMessage = async (req, res) => {
 
     try {
         const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
+            model: GEMINI_MODEL,
             contents
         })
         if (response.text) {

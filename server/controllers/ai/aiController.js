@@ -1,6 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import fs from "node:fs"
 import uploadToCloudinary from "../../middleware/cloudinaryMiddleware.js";
+import GEMINI_MODEL from "../../config/aiConfig.js";
 import Prescription from "../../models/prescriptionModel.js";
 import Product from "../../models/productModel.js";
 import Pathologist from "../../models/pathologistModel.js";
@@ -50,7 +51,7 @@ const explainPrescription = async (req, res) => {
         const base64 = fileToBase64(req.file.path);
 
         const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
+            model: GEMINI_MODEL,
             contents: [
                 {
                     role: "user",
@@ -191,7 +192,7 @@ Here is the data: ${payload}
     try {
 
         const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
+            model: GEMINI_MODEL,
             contents: [
                 {
                     role: "user",
