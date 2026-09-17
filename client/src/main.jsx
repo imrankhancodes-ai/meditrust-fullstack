@@ -22,7 +22,23 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
         <App />
-        <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              borderRadius: "999px",
+              background: "rgba(255,255,255,0.92)",
+              backdropFilter: "blur(12px)",
+              border: "1px solid rgba(15,118,110,0.15)",
+              boxShadow: "0 8px 30px rgba(15,118,110,0.15)",
+              fontSize: "13px",
+              fontWeight: 600,
+              color: "#0f172a",
+            },
+            success: { iconTheme: { primary: "#0f766e", secondary: "#fff" } },
+          }}
+        />
       </QueryClientProvider>
     </Provider>
   </React.StrictMode>

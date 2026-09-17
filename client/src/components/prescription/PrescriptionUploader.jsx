@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { UploadCloud, FileImage } from "lucide-react";
+import { motion } from "framer-motion";
+import { UploadCloud, FileImage, TriangleAlert, CheckCircle2 } from "lucide-react";
 import { Button } from "../ui/ui";
+import GradientMesh from "../ui/GradientMesh";
 
 export function PrescriptionUploader({ onFile, loading }) {
   const [preview, setPreview] = useState(null);
@@ -14,7 +16,8 @@ export function PrescriptionUploader({ onFile, loading }) {
   };
 
   return (
-    <div
+    <motion.div
+      whileHover={loading ? {} : { y: -2 }}
       onDragOver={(e) => {
         e.preventDefault();
         setDragOver(true);
@@ -25,39 +28,42 @@ export function PrescriptionUploader({ onFile, loading }) {
         setDragOver(false);
         pick(e.dataTransfer.files?.[0]);
       }}
-      className={`rounded-2xl border-2 border-dashed bg-white p-8 text-center transition ${
-        dragOver ? "border-teal-600 bg-teal-50" : "border-slate-300"
+      className={`relative overflow-hidden rounded-[2rem] border-2 border-dashed bg-white p-8 text-center transition ${
+        dragOver ? "border-teal-600 bg-teal-50/60" : "border-slate-300"
       }`}
     >
-      {preview ? (
-        <img src={preview} alt="Prescription preview" className="mx-auto max-h-64 rounded-xl object-contain" />
-      ) : (
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-teal-50 text-teal-700">
-          <FileImage size={28} />
-        </div>
-      )}
-      <h3 className="mt-4 font-bold text-slate-900">Drop your prescription photo here</h3>
-      <p className="mt-1 text-sm text-slate-500">or pick a clear photo of the prescription (printed or handwritten)</p>
-      <label className="mt-4 inline-block cursor-pointer">
-        <input
-          type="file"
-          accept="image/*"
-          className="hidden"
-          disabled={loading}
-          onChange={(e) => pick(e.target.files?.[0])}
-        />
-        <span className="btn-press inline-flex items-center gap-2 rounded-xl bg-teal-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-teal-800">
-          <UploadCloud size={16} /> Choose photo
-        </span>
-      </label>
-    </div>
+      <GradientMesh />
+      <div className="relative">
+        {preview ? (
+          <img src={preview} alt="Prescription preview" className="mx-auto max-h-64 rounded-2xl object-contain shadow-md" />
+        ) : (
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br from-teal-600 to-teal-800 text-white shadow-[0_6px_20px_rgba(17,94,89,0.4)]">
+            <FileImage size={28} strokeWidth={2} />
+          </div>
+        )}
+        <h3 className="font-display mt-4 font-bold text-slate-900">Drop your prescription photo here</h3>
+        <p className="mt-1 text-sm text-slate-500">or pick a clear photo of the prescription (printed or handwritten)</p>
+        <label className="mt-4 inline-block cursor-pointer">
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            disabled={loading}
+            onChange={(e) => pick(e.target.files?.[0])}
+          />
+          <span className="btn-press inline-flex items-center gap-2 rounded-full bg-teal-700 px-6 py-3 text-sm font-semibold text-white shadow-[0_6px_20px_rgba(17,94,89,0.4)] hover:bg-teal-800">
+            <UploadCloud size={16} strokeWidth={2.2} /> Choose photo
+          </span>
+        </label>
+      </div>
+    </motion.div>
   );
 }
 
 export function ProcessingSteps({ step }) {
   const steps = ["Reading image…", "Extracting medicines…", "Matching inventory…"];
   return (
-    <div className="rounded-2xl bg-white p-6 shadow-sm">
+    <div className="rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm">
       <div className="flex items-center gap-3">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-200 border-t-teal-700" />
         <p className="font-semibold text-slate-800">Analyzing your prescription with AI…</p>
@@ -91,7 +97,7 @@ export function ExtractedMedicineTable({ medicines }) {
     return <p className="text-sm text-slate-500">No medicines were extracted from this prescription.</p>;
   }
   return (
-    <div className="overflow-x-auto rounded-2xl bg-white shadow-sm">
+    <div className="overflow-x-auto rounded-3xl border border-slate-100 bg-white shadow-sm">
       <table className="w-full min-w-[560px] text-left text-sm">
         <thead>
           <tr className="border-b border-slate-100 text-xs uppercase text-slate-400">
@@ -136,8 +142,8 @@ export function MatchResultsPanel({ result, onAddToCart, addingId }) {
             ["Unavailable", result.summary.medicines_unavailable],
             ["Tests found", result.summary.tests_with_available_labs],
           ].map(([k, v]) => (
-            <div key={k} className="rounded-2xl bg-white p-4 text-center shadow-sm">
-              <div className="text-2xl font-extrabold text-teal-800">{v ?? 0}</div>
+            <div key={k} className="rounded-3xl border border-slate-100 bg-white p-4 text-center shadow-sm">
+              <div className="font-display text-2xl font-bold text-teal-800">{v ?? 0}</div>
               <div className="text-xs font-medium text-slate-500">{k}</div>
             </div>
           ))}
@@ -145,7 +151,7 @@ export function MatchResultsPanel({ result, onAddToCart, addingId }) {
       )}
 
       {(result.medicines || []).map((m, i) => (
-        <div key={i} className="rounded-2xl bg-white p-4 shadow-sm">
+        <div key={i} className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-bold text-slate-900">{m.prescribed_name}</span>
             <span
@@ -158,14 +164,17 @@ export function MatchResultsPanel({ result, onAddToCart, addingId }) {
               {m.match_confidence} confidence
             </span>
             {m.available ? (
-              <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-bold text-emerald-800">Available</span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-bold text-emerald-800">
+                <CheckCircle2 size={12} strokeWidth={2.6} /> Available
+              </span>
             ) : (
               <span className="rounded-full bg-slate-200 px-2.5 py-0.5 text-xs font-bold text-slate-600">Unavailable</span>
             )}
           </div>
           {unclear(m) && (
-            <p className="mt-2 rounded-xl bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-800">
-              ⚠ Unclear — please verify with your doctor or pharmacist before ordering.
+            <p className="mt-2 flex items-start gap-1.5 rounded-2xl bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-800">
+              <TriangleAlert size={14} strokeWidth={2.4} className="mt-0.5 shrink-0" />
+              Unclear — please verify with your doctor or pharmacist before ordering.
             </p>
           )}
           <p className="mt-1 text-sm text-slate-500">
@@ -186,8 +195,8 @@ export function MatchResultsPanel({ result, onAddToCart, addingId }) {
       ))}
 
       {(result.tests || []).length > 0 && (
-        <div className="rounded-2xl bg-white p-4 shadow-sm">
-          <h4 className="font-bold text-slate-900">Suggested lab tests</h4>
+        <div className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
+          <h4 className="font-display font-bold text-slate-900">Suggested lab tests</h4>
           {(result.tests || []).map((t, i) => (
             <div key={i} className="mt-2 border-t border-slate-100 pt-2 text-sm">
               <div className="font-semibold">{t.prescribed_test}</div>

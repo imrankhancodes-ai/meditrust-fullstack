@@ -86,7 +86,7 @@ export default function AdminProductForm() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <h1 className="text-xl font-extrabold">{isEdit ? "Edit product" : "Add product"}</h1>
+      <h1 className="font-display text-xl font-bold">{isEdit ? "Edit product" : "Add product"}</h1>
       <Card className="mt-4">
         <form onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
           <Input label="Name *" value={form.name} onChange={(e) => set("name", e.target.value)} />
@@ -94,7 +94,7 @@ export default function AdminProductForm() {
           <Input label="Generic / salt composition *" value={form.genericName} onChange={(e) => set("genericName", e.target.value)} placeholder="Paracetamol" />
           <label className="block">
             <span className="mb-1 block text-sm font-medium">Category *</span>
-            <select value={form.category} onChange={(e) => set("category", e.target.value)} className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm">
+            <select value={form.category} onChange={(e) => set("category", e.target.value)} className="w-full rounded-2xl border border-slate-200 px-3.5 py-2.5 text-sm shadow-sm">
               {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </label>
@@ -107,7 +107,7 @@ export default function AdminProductForm() {
           </label>
           <label className="block sm:col-span-2">
             <span className="mb-1 block text-sm font-medium">Description *</span>
-            <textarea value={form.description} onChange={(e) => set("description", e.target.value)} rows={3} className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm" />
+              <textarea value={form.description} onChange={(e) => set("description", e.target.value)} rows={3} className="w-full rounded-2xl border border-slate-200 px-3.5 py-2.5 text-sm shadow-sm" />
           </label>
           {!isEdit && (
             <label className="block sm:col-span-2">

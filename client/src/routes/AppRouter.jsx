@@ -21,6 +21,10 @@ import LabProfile from "../pages/pathology/LabProfile";
 import BecomePathologist from "../pages/pathology/BecomePathologist";
 import ChatPage from "../pages/chat/ChatPage";
 import Profile from "../pages/account/Profile";
+import PatientOverview from "../pages/dashboard/patient/PatientOverview";
+import DoctorOverview from "../pages/dashboard/doctor/DoctorOverview";
+import PathologistOverview from "../pages/dashboard/pathologist/PathologistOverview";
+import AdminOverview from "../pages/dashboard/admin/AdminOverview";
 import DoctorAppointments from "../pages/dashboard/doctor/DoctorAppointments";
 import PathologistTests from "../pages/dashboard/pathologist/PathologistTests";
 import PathologistAppointments from "../pages/dashboard/pathologist/PathologistAppointments";
@@ -30,6 +34,7 @@ import AdminProductForm from "../pages/dashboard/admin/AdminProductForm";
 import AdminVerifications from "../pages/dashboard/admin/AdminVerifications";
 import AdminOrders from "../pages/dashboard/admin/AdminOrders";
 import AdminCredits from "../pages/dashboard/admin/AdminCredits";
+import useAuth from "../hooks/useAuth";
 import NotFound from "../pages/NotFound";
 
 function DashboardShell({ children }) {
@@ -39,6 +44,14 @@ function DashboardShell({ children }) {
       <div className="min-w-0 flex-1">{children}</div>
     </div>
   );
+}
+
+function DashboardRedirect() {
+  const { userType } = useAuth();
+  if (userType === "ADMIN") return <Navigate to="/dashboard/admin" replace />;
+  if (userType === "DOCTOR") return <Navigate to="/dashboard/doctor" replace />;
+  if (userType === "PATHOLOGIST") return <Navigate to="/dashboard/pathologist" replace />;
+  return <DashboardShell><PatientOverview /></DashboardShell>;
 }
 
 export default function AppRouter() {
@@ -72,11 +85,14 @@ export default function AppRouter() {
       <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
       <Route path="/account" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
 
+      <Route path="/dashboard/doctor" element={<RoleRoute roles={["DOCTOR", "ADMIN"]}><DashboardShell><DoctorOverview /></DashboardShell></RoleRoute>} />
       <Route path="/dashboard/doctor/appointments" element={<RoleRoute roles={["DOCTOR", "ADMIN"]}><DashboardShell><DoctorAppointments /></DashboardShell></RoleRoute>} />
 
+      <Route path="/dashboard/pathologist" element={<RoleRoute roles={["PATHOLOGIST", "ADMIN"]}><DashboardShell><PathologistOverview /></DashboardShell></RoleRoute>} />
       <Route path="/dashboard/pathologist/tests" element={<RoleRoute roles={["PATHOLOGIST", "ADMIN"]}><DashboardShell><PathologistTests /></DashboardShell></RoleRoute>} />
       <Route path="/dashboard/pathologist/appointments" element={<RoleRoute roles={["PATHOLOGIST", "ADMIN"]}><DashboardShell><PathologistAppointments /></DashboardShell></RoleRoute>} />
 
+      <Route path="/dashboard/admin" element={<RoleRoute roles={["ADMIN"]}><DashboardShell><AdminOverview /></DashboardShell></RoleRoute>} />
       <Route path="/dashboard/admin/users" element={<RoleRoute roles={["ADMIN"]}><DashboardShell><AdminUsers /></DashboardShell></RoleRoute>} />
       <Route path="/dashboard/admin/products" element={<RoleRoute roles={["ADMIN"]}><DashboardShell><AdminProducts /></DashboardShell></RoleRoute>} />
       <Route path="/dashboard/admin/products/new" element={<RoleRoute roles={["ADMIN"]}><DashboardShell><AdminProductForm /></DashboardShell></RoleRoute>} />
@@ -84,8 +100,7 @@ export default function AppRouter() {
       <Route path="/dashboard/admin/verifications" element={<RoleRoute roles={["ADMIN"]}><DashboardShell><AdminVerifications /></DashboardShell></RoleRoute>} />
       <Route path="/dashboard/admin/orders" element={<RoleRoute roles={["ADMIN"]}><DashboardShell><AdminOrders /></DashboardShell></RoleRoute>} />
       <Route path="/dashboard/admin/credits" element={<RoleRoute roles={["ADMIN"]}><DashboardShell><AdminCredits /></DashboardShell></RoleRoute>} />
-      <Route path="/dashboard/admin" element={<Navigate to="/dashboard/admin/users" replace />} />
-      <Route path="/dashboard" element={<Navigate to="/" replace />} />
+      <Route path="/dashboard" element={<ProtectedRoute><DashboardRedirect /></ProtectedRoute>} />
 
       <Route path="*" element={<NotFound />} />
     </Routes>

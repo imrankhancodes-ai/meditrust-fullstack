@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import { Coins, Check, X } from "lucide-react";
 import adminService from "../../../services/adminService";
-import { Spinner, ErrorState, EmptyState, Badge } from "../../../components/ui/ui";
+import { ErrorState, EmptyState, Badge } from "../../../components/ui/ui";
+import { ListSkeletonShaped } from "../../../components/ui/Skeletons";
 
 function errMsg(err, fallback) {
   return err?.response?.data?.message || err?.response?.data?.error || err?.message || fallback;
@@ -29,7 +31,7 @@ export default function AdminCredits() {
     onError: (err) => toast.error(errMsg(err, "Review failed")),
   });
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <ListSkeletonShaped count={4} />;
   if (isError) return <ErrorState message="Could not load credit requests." onRetry={() => refetch()} />;
 
   const toneFor = (s) => (s === "approved" ? "delivered" : s === "rejected" ? "cancelled" : "pending");
@@ -37,14 +39,14 @@ export default function AdminCredits() {
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h1 className="text-xl font-extrabold">Prescription credits</h1>
+        <h1 className="font-display text-xl font-bold">Prescription credits</h1>
         <div className="flex gap-1.5">
           {["pending", "approved", "rejected", "all"].map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`btn-press rounded-lg px-3 py-1.5 text-xs font-bold capitalize ${
-                filter === f ? "bg-teal-700 text-white" : "bg-white text-slate-600 shadow-sm hover:bg-teal-50"
+              className={`btn-press rounded-full px-3.5 py-1.5 text-xs font-bold capitalize transition ${
+                filter === f ? "bg-ink-950 text-white shadow" : "bg-white text-slate-600 shadow-sm ring-1 ring-slate-200 hover:bg-teal-50"
               }`}
             >
               {f}
@@ -58,12 +60,12 @@ export default function AdminCredits() {
 
       {!data || data.length === 0 ? (
         <div className="mt-4">
-          <EmptyState icon="🪙" title={`No ${filter} requests`} />
+          <EmptyState icon={<Coins size={30} strokeWidth={2} />} title={`No ${filter} requests`} />
         </div>
       ) : (
         <div className="mt-4 space-y-3">
           {data.map((r) => (
-            <div key={r._id} className="rounded-2xl bg-white p-4 shadow-sm">
+            <div key={r._id} className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <span className="font-bold text-slate-900">{r.user?.name || "Unknown"}</span>
@@ -88,7 +90,7 @@ export default function AdminCredits() {
               )}
 
               {r.status === "pending" && (
-                <div className="mt-3 flex flex-col gap-2 rounded-xl bg-slate-50 p-3 sm:flex-row sm:items-end">
+                <div className="mt-3 flex flex-col gap-2 rounded-2xl bg-slate-50 p-3 sm:flex-row sm:items-end">
                   <label className="block">
                     <span className="mb-1 block text-xs font-bold text-slate-600">Grant amount</span>
                     <input
@@ -97,7 +99,7 @@ export default function AdminCredits() {
                       max={50}
                       value={grantAmounts[r._id] ?? r.requestedCredits}
                       onChange={(e) => setGrantAmounts({ ...grantAmounts, [r._id]: e.target.value })}
-                      className="w-28 rounded-xl border border-slate-300 px-3 py-2 text-sm"
+                      className="w-28 rounded-2xl border border-slate-200 px-3 py-2 text-sm"
                     />
                   </label>
                   <label className="block flex-1">
@@ -107,7 +109,7 @@ export default function AdminCredits() {
                       value={notes[r._id] ?? ""}
                       onChange={(e) => setNotes({ ...notes, [r._id]: e.target.value })}
                       placeholder="e.g. Granted for family uploads"
-                      className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm"
+                      className="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm"
                     />
                   </label>
                   <div className="flex gap-2">
@@ -123,18 +125,18 @@ export default function AdminCredits() {
                           },
                         })
                       }
-                      className="btn-press rounded-xl bg-teal-700 px-4 py-2 text-sm font-bold text-white hover:bg-teal-800 disabled:opacity-50"
+                      className="btn-press inline-flex items-center gap-1.5 rounded-full bg-teal-700 px-4 py-2 text-sm font-bold text-white shadow-[0_4px_14px_rgba(17,94,89,0.35)] hover:bg-teal-800 disabled:opacity-50"
                     >
-                      Approve
+                      <Check size={14} strokeWidth={2.6} /> Approve
                     </button>
                     <button
                       disabled={review.isPending}
                       onClick={() =>
                         review.mutate({ rid: r._id, payload: { action: "reject", adminNote: notes[r._id] || "" } })
                       }
-                      className="btn-press rounded-xl border border-red-300 px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50 disabled:opacity-50"
+                      className="btn-press inline-flex items-center gap-1.5 rounded-full border border-red-300 px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50 disabled:opacity-50"
                     >
-                      Reject
+                      <X size={14} strokeWidth={2.6} /> Reject
                     </button>
                   </div>
                 </div>

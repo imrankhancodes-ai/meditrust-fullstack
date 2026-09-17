@@ -1,7 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
+import { ShoppingCart } from "lucide-react";
 import { useCartQuery, useSetCartQty, useRemoveCartItem } from "../hooks/useCart";
 import { CartLineItem, CartSummary } from "../components/cart/CartDrawer";
-import { Spinner, ErrorState, EmptyState } from "../components/ui/ui";
+import { ErrorState, EmptyState } from "../components/ui/ui";
+import { OrderListSkeleton } from "../components/ui/Skeletons";
+import SectionHeading from "../components/ui/SectionHeading";
+import Reveal from "../components/motion/Reveal";
 
 export default function Cart() {
   const { data: cart, isLoading, isError, refetch } = useCartQuery();
@@ -9,7 +13,7 @@ export default function Cart() {
   const removeItem = useRemoveCartItem();
   const navigate = useNavigate();
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <OrderListSkeleton count={3} />;
   if (isError) return <ErrorState message="Could not load your cart." onRetry={() => refetch()} />;
 
   const items = cart?.items || [];
@@ -17,11 +21,11 @@ export default function Cart() {
   if (items.length === 0) {
     return (
       <EmptyState
-        icon="🛒"
+        icon={<ShoppingCart size={30} strokeWidth={2} />}
         title="Your cart is empty"
         hint="Add medicines from the shop or straight from a prescription result."
         action={
-          <Link to="/shop" className="btn-press rounded-xl bg-teal-700 px-5 py-2.5 text-sm font-bold text-white">
+          <Link to="/shop" className="btn-press rounded-full bg-teal-700 px-6 py-2.5 text-sm font-bold text-white shadow-[0_4px_14px_rgba(17,94,89,0.35)]">
             Browse medicines
           </Link>
         }
@@ -31,11 +35,11 @@ export default function Cart() {
 
   return (
     <div>
-      <h1 className="text-2xl font-extrabold text-slate-900">Your cart</h1>
-      <div className="mt-4 grid gap-6 lg:grid-cols-[1fr_340px]">
+      <SectionHeading eyebrow="Cart" title="Your cart" sub={`${items.length} item(s) ready for checkout.`} />
+      <Reveal className="mt-4 grid gap-6 lg:grid-cols-[1fr_340px]">
         <div className="space-y-3">
           {items.map((i) => (
-            <div key={i.product?._id || i.product} className="rounded-2xl bg-white p-3 shadow-sm">
+            <div key={i.product?._id || i.product} className="rounded-3xl border border-slate-100 bg-white p-3 shadow-sm">
               <CartLineItem
                 item={i}
                 pending={setQty.isPending || removeItem.isPending}
@@ -46,7 +50,7 @@ export default function Cart() {
           ))}
         </div>
         <CartSummary items={items} onCheckout={() => navigate("/checkout")} />
-      </div>
+      </Reveal>
     </div>
   );
 }

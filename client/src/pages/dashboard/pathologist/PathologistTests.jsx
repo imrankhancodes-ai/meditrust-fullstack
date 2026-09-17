@@ -2,7 +2,9 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import pathologistService from "../../../services/pathologistService";
-import { Input, Button, Card, Spinner, ErrorState, EmptyState } from "../../../components/ui/ui";
+import { Input, Button, Card, ErrorState, EmptyState } from "../../../components/ui/ui";
+import { ListSkeletonShaped } from "../../../components/ui/Skeletons";
+import { FlaskConical } from "lucide-react";
 
 function errMsg(err, fallback) {
   return err?.response?.data?.message || err?.response?.data?.error || err?.message || fallback;
@@ -49,12 +51,12 @@ export default function PathologistTests() {
     onError: (err) => toast.error(errMsg(err, "Delete failed")),
   });
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <ListSkeletonShaped count={4} />;
   if (isError) return <ErrorState message="Could not load tests." onRetry={() => refetch()} />;
 
   return (
     <div>
-      <h1 className="text-xl font-extrabold">My test catalog</h1>
+      <h1 className="font-display text-xl font-bold">My test catalog</h1>
 
       <Card className="mt-4">
         <h3 className="font-bold">{editing ? "Edit test" : "Add a test"}</h3>
@@ -85,7 +87,7 @@ export default function PathologistTests() {
 
       <div className="mt-4 space-y-3">
         {(!tests || tests.length === 0) && (
-          <EmptyState icon="🧪" title="No tests yet" hint="Add your first diagnostic test above." />
+          <EmptyState icon={<FlaskConical size={30} strokeWidth={2} />} title="No tests yet" hint="Add your first diagnostic test above." />
         )}
         {(tests || []).map((t) => (
           <div key={t._id} className="flex items-center justify-between gap-3 rounded-2xl bg-white p-4 shadow-sm">

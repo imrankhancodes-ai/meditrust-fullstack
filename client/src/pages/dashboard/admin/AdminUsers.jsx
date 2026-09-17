@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import { Check, X, Users, Coins } from "lucide-react";
 import adminService from "../../../services/adminService";
-import { Spinner, ErrorState, EmptyState, Badge } from "../../../components/ui/ui";
+import { ErrorState, EmptyState, Badge } from "../../../components/ui/ui";
+import { ListSkeletonShaped } from "../../../components/ui/Skeletons";
 
 function errMsg(err, fallback) {
   return err?.response?.data?.message || err?.response?.data?.error || err?.message || fallback;
@@ -28,14 +30,14 @@ export default function AdminUsers() {
     onError: (err) => toast.error(errMsg(err, "Grant failed")),
   });
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <ListSkeletonShaped count={6} />;
   if (isError) return <ErrorState message="Could not load users." onRetry={() => refetch()} />;
-  if (!users || users.length === 0) return <EmptyState icon="👥" title="No users" />;
+  if (!users || users.length === 0) return <EmptyState icon={<Users size={30} strokeWidth={2} />} title="No users" />;
 
   return (
     <div>
-      <h1 className="text-xl font-extrabold">Users ({users.length})</h1>
-      <div className="mt-4 overflow-x-auto rounded-2xl bg-white shadow-sm">
+      <h1 className="font-display text-xl font-bold">Users ({users.length})</h1>
+      <div className="mt-4 overflow-x-auto rounded-3xl border border-slate-100 bg-white shadow-sm">
         <table className="w-full min-w-[760px] text-left text-sm">
           <thead>
             <tr className="border-b border-slate-100 text-xs uppercase text-slate-400">
@@ -55,8 +57,18 @@ export default function AdminUsers() {
                 <td className="px-4 py-3 text-slate-600">{u.email}</td>
                 <td className="px-4 py-3 text-slate-600">{u.phone}</td>
                 <td className="px-4 py-3"><Badge>{u.userType}</Badge></td>
-                <td className="px-4 py-3 font-extrabold text-teal-800">{u.prescriptionCredits ?? 3}</td>
-                <td className="px-4 py-3">{u.isActive ? "✅" : "❌"}</td>
+                <td className="px-4 py-3 font-display font-bold text-teal-800">{u.prescriptionCredits ?? 3}</td>
+                <td className="px-4 py-3">
+                  {u.isActive ? (
+                    <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+                      <Check size={14} strokeWidth={3} />
+                    </span>
+                  ) : (
+                    <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-red-100 text-red-600">
+                      <X size={14} strokeWidth={3} />
+                    </span>
+                  )}
+                </td>
                 <td className="px-4 py-3">
                   {grantFor === u._id ? (
                     <span className="flex items-center gap-1">
@@ -66,28 +78,30 @@ export default function AdminUsers() {
                         max={50}
                         value={grantAmount}
                         onChange={(e) => setGrantAmount(e.target.value)}
-                        className="w-16 rounded-lg border border-slate-300 px-2 py-1 text-sm"
+                        className="w-16 rounded-xl border border-slate-200 px-2 py-1.5 text-sm"
                       />
                       <button
                         disabled={grant.isPending}
                         onClick={() => grant.mutate({ uid: u._id, addCredits: Number(grantAmount) })}
-                        className="rounded-lg bg-teal-700 px-2 py-1 text-xs font-bold text-white hover:bg-teal-800"
+                        aria-label="Confirm grant"
+                        className="flex h-7 w-7 items-center justify-center rounded-full bg-teal-700 text-white hover:bg-teal-800"
                       >
-                        ✓
+                        <Check size={14} strokeWidth={3} />
                       </button>
                       <button
                         onClick={() => setGrantFor(null)}
-                        className="rounded-lg px-2 py-1 text-xs text-slate-400 hover:bg-slate-100"
+                        aria-label="Cancel grant"
+                        className="flex h-7 w-7 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100"
                       >
-                        ✕
+                        <X size={14} strokeWidth={3} />
                       </button>
                     </span>
                   ) : (
                     <button
                       onClick={() => { setGrantFor(u._id); setGrantAmount(3); }}
-                      className="rounded-lg bg-teal-50 px-2.5 py-1 text-xs font-bold text-teal-800 hover:bg-teal-100"
+                      className="inline-flex items-center gap-1 rounded-full bg-teal-50 px-2.5 py-1.5 text-xs font-bold text-teal-800 hover:bg-teal-100"
                     >
-                      + credits
+                      <Coins size={12} strokeWidth={2.4} /> credits
                     </button>
                   )}
                 </td>

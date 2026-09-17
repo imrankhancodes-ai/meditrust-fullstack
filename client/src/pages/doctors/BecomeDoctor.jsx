@@ -1,5 +1,6 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { Hourglass } from "lucide-react";
 import doctorService from "../../services/doctorService";
 import { Input, Button, Card } from "../../components/ui/ui";
 
@@ -56,8 +57,10 @@ export default function BecomeDoctor() {
   if (done) {
     return (
       <Card className="mx-auto max-w-xl text-center">
-        <div className="text-5xl">⏳</div>
-        <h1 className="mt-3 text-xl font-extrabold">Pending verification</h1>
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-amber-50 text-amber-600">
+          <Hourglass size={30} strokeWidth={2} />
+        </div>
+        <h1 className="font-display mt-3 text-xl font-bold">Pending verification</h1>
         <p className="mt-1 text-sm text-slate-500">
           Your doctor application is under review. An admin will verify your registration shortly.
         </p>

@@ -1,7 +1,11 @@
 import { useState } from "react";
+import { Search, FlaskConical } from "lucide-react";
 import { usePathologists, usePathologyTests } from "../../hooks/useDoctors";
-import { LabCard } from "../../components/pathologist/LabCard";
-import { Skeletons, ErrorState, EmptyState } from "../../components/ui/ui";
+import { LabGrid } from "../../components/pathologist/LabCard";
+import { ErrorState, EmptyState } from "../../components/ui/ui";
+import { CardGridSkeleton, LabCardSkeleton } from "../../components/ui/Skeletons";
+import SectionHeading from "../../components/ui/SectionHeading";
+import GradientMesh from "../../components/ui/GradientMesh";
 
 export default function LabList() {
   const { data: labs, isLoading, isError, refetch } = usePathologists();
@@ -17,27 +21,34 @@ export default function LabList() {
 
   return (
     <div>
-      <h1 className="text-2xl font-extrabold text-slate-900">Diagnostic labs</h1>
-      <p className="mt-1 text-sm text-slate-500">Browse labs and book pathology tests.</p>
-      <input
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-        placeholder="Search labs, areas, specializations…"
-        className="mt-4 w-full max-w-md rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100"
-      />
+      <section className="relative overflow-hidden rounded-[2rem] border border-slate-100 bg-white px-6 py-8 shadow-[0_2px_16px_rgba(15,118,110,0.08)] sm:px-8">
+        <GradientMesh />
+        <div className="relative">
+          <SectionHeading
+            eyebrow="Diagnostics"
+            title="Diagnostic labs"
+            sub="Browse labs and book pathology tests."
+          />
+          <div className="relative mt-4 max-w-md">
+            <Search size={17} strokeWidth={2.2} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search labs, areas, specializations…"
+              className="w-full rounded-full border border-slate-200 bg-white py-3 pl-11 pr-4 text-sm shadow-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200"
+            />
+          </div>
+        </div>
+      </section>
       <div className="mt-5">
         {isLoading ? (
-          <Skeletons count={6} />
+          <CardGridSkeleton count={6} Card={LabCardSkeleton} />
         ) : isError ? (
           <ErrorState message="Could not load labs." onRetry={() => refetch()} />
         ) : filtered.length === 0 ? (
-          <EmptyState icon="🧪" title="No labs found" hint="Try a different search." />
+          <EmptyState icon={<FlaskConical size={30} strokeWidth={2} />} title="No labs found" hint="Try a different search." />
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((l) => (
-              <LabCard key={l._id} lab={l} />
-            ))}
-          </div>
+          <LabGrid labs={filtered} />
         )}
       </div>
     </div>
